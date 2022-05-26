@@ -1,16 +1,17 @@
-Pitch: Web app to track your pets, keep their information, track stats
+Pitch: Web app to track your pets, keep their information, track activity stats
 
 MVP:
 User login in/registration
 Add pet(s) to Account
-Update pet information (name, breed, birthday, weight)
+Update pet information (name, breed, birthday, weight, etc)
 Ability to upload GPS data to get stats from walks/runs (total distance, max speed, elevation, and see route on map)
+See activity totals (daily, weekly, monthly, etc)
 
 Future Features:
-Furriend list to connect with pet friends
-Compare daily/weekly/monthly activity with furriends
+frieds list to connect with pet friends
+Compare daily/weekly/monthly activity with friends
 Suggestions for similarly active pets
 activity competitions 
 Oauth for google/apple accounts
-birthday reminders
+pet birthday reminders 
 set privacy options
