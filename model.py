@@ -3,7 +3,7 @@ from flask_login import UserMixin
 
 db = SQLAlchemy()
 
-class User(db.model, UserMixin):
+class User(db.Model, UserMixin):
     """Human user of Track the Pack"""
 
     __tablename__ = "users"
@@ -17,7 +17,7 @@ class User(db.model, UserMixin):
     def __repr__(self):
         return f"<User user_id={self.user_id} email={self.email}>"
 
-class Pet(db.model):
+class Pet(db.Model):
     """Pet of a given user"""
 
     __tablename__ = "pets"
@@ -34,7 +34,7 @@ class Pet(db.model):
         return f"<Pet pet_id={self.pet_id} name={self.pet_name} birthday={self.birthday}>"
 
 
-class Activity(db.model):
+class Activity(db.Model):
     """Activities of a pet"""
 
     __tablename__ = 'activities'
@@ -44,10 +44,10 @@ class Activity(db.model):
     activity_date = db.Column(db.Date)
     activity_type = db.Column(db.String(64))
 
-    pet = db.relationship("Pet", bacref=db.backref("activities", order_by=activity_id))
+    pet = db.relationship("Pet", backref=db.backref("activities", order_by=activity_id))
 
 
-class GPS_Point(db.model):
+class GPS_Point(db.Model):
     """Stores gps data for activity"""
 
     __tablename__ = 'gps_points'
@@ -61,10 +61,10 @@ class GPS_Point(db.model):
     distance = db.Column(db.Float)
     speed = db.Column(db.Float)
 
-    activity = db.relationship("Activity", bacref=db.backref("gps_points", order_by=gps_point_id))
+    activity = db.relationship("Activity", backref=db.backref("gps_points", order_by=gps_point_id))
 
 
-class Friend(db.model):
+class Friend(db.Model):
     """Stores friend lists for pets"""
 
     __tablename__ = 'friends'
@@ -74,3 +74,20 @@ class Friend(db.model):
     friend_id = db.Column(db.Integer, db.ForeignKey('pets.pet_id'))
 
     pet = db.relationship("Pet", backref=db.backref('friends'), order_by=friend_list_id)
+
+def connect_to_db(app):
+    """Connect the database to our Flask app."""
+
+    # Configure to use our PstgreSQL database
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///trackthepack'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.app = app
+    db.init_app(app)
+
+if __name__ == "__main__":
+    # As a convenience, if we run this module interactively, it will leave
+    # you in a state of being able to work with the database directly.
+
+    from server import app
+    connect_to_db(app)
+    print("Connected to DB.")
