@@ -1,0 +1,26 @@
+body {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    justify-content: center;
+    border: solid black thick;
+    margin: auto;
+}
+
+.title {
+    text-align: center;
+    border: solid blue thin;
+}
+
+.nav {
+    text-align: center;
+    border: solid green thin;
+}
+
+.flash {
+    color: red;
+}
+
+.content {
+    text-align: center;
+}

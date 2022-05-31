@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="title">Track the Pack</div> 
+    <br>
+
+    <div class="nav">Navbar</div> 
+    <br>
+
+    <div class="flash">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+    </div> 
+    <br>
+    
+    <div class="content">
+        {% block content%}{% endblock%}
+    </div>
+    <br>
+
+</body>
+</html>

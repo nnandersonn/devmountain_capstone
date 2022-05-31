@@ -14,4 +14,4 @@ Suggestions for similarly active pets
 activity competitions 
 Oauth for google/apple accounts
 pet birthday reminders 
-set privacy options
+set privacy options for pet activities (i.e. see walk map)
