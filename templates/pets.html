@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content%}
+{% for pet in current_user.pets %}
+    {{pet.pet_name}} <br> 
+    <a href="/edit_pet/{{pet.pet_id}}">Edit</a> <br><br>
+{% endfor %}
+{% endblock %}

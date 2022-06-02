@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form action="/add_pet" method="POST" novalidate>
+    {{form.csrf_token}}
+    {{form.name.label}}: {{form.name}} 
+    {%for err in form.name.errors%}
+        <span class="flash">{{err}}</span>
+    {% endfor %}<br>
+    {{form.breed.label}}: {{form.breed}} 
+    {%for err in form.breed.errors%}
+        <span class="flash">{{err}}</span>
+    {% endfor %}<br> 
+    {{form.birthday.label}}: {{form.birthday}}
+    {%for err in form.birthday.errors%}
+        <span class="flash">{{err}}</span>
+    {% endfor %}<br> 
+
+    {{form.submit}}
+</form>
+
+{% endblock %}
