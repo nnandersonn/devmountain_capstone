@@ -1,11 +1,12 @@
+from random import choices
 from sqlite3 import connect
 from flask import Flask, render_template, redirect, request, flash, session
-from wtforms import Form, BooleanField, StringField, DateField, PasswordField, SubmitField, validators, IntegerField
+from wtforms import Form, BooleanField, StringField, DateField, PasswordField, SubmitField, SelectField, SelectMultipleField, validators, IntegerField
 from wtforms.validators import InputRequired, Email
 from flask_wtf import FlaskForm
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 
-from model import User, Pet, Activity, GPS_Point, Friend, connect_to_db, db
+from model import Pet_Activity, User, Pet, Activity, GPS_Point, Friend, connect_to_db, db
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -127,7 +128,38 @@ def update_pet(pet_id):
     db.session.commit()
     flash(f"{pet_name}'s info has been successfully updated!")
     return render_template('homepage.html')
+    
+@app.route('/activities', methods=["GET"])
+def activities():
+    return render_template('activities.html')
 
+@app.route('/activity', methods=["GET"])
+def activity():
+    form = ActivityForm()
+    user_pets = []
+    if current_user.pets is not None:
+        for pets in current_user.pets:
+            user_pets.append((pets.pet_id, pets.pet_name))
+    form.pet_select.choices = user_pets
+    return render_template('activity.html', form=form)
+
+@app.route('/activity', methods=["POST"])
+def submit_activity():
+    activity_name = request.form["activity_name"]
+    activity_type = request.form["activity_type"]
+    activity = Activity(activity_name = activity_name, activity_type = activity_type)
+    db.session.add(activity)
+    db.session.commit()
+    activity_id = activity.activity_id
+    
+    pets = request.form.getlist('pet_select')
+    print(pets)
+    for pet in pets:
+        pet_activity = Pet_Activity(pet_id = pet, activity_id = activity_id)
+        db.session.add(pet_activity)
+    db.session.commit()
+
+    return render_template('activities.html')
 
 class RegistrationForm(FlaskForm):
     email = StringField('Email Address', [InputRequired('Please enter your email address.'), Email('This field requires a valid email address')])
@@ -152,6 +184,13 @@ class PetEditForm(FlaskForm):
     breed = StringField("Breed", [InputRequired("Update the breed of your pet")])
     birthday = DateField("Birthday", [InputRequired("Update your pet's birthday")])
     submit = SubmitField("Submit Changes")
+
+class ActivityForm(FlaskForm):
+    activity_name = StringField("Activity Title", [InputRequired("Please enter a name for your activity")])
+    activity_type = SelectField("Activity Type", choices=["Walk", "Run", "Hike", "Swim", "Other"])
+    submit = SubmitField("Create Activity")
+    
+    pet_select = SelectMultipleField("Pet Select")
 
 if __name__ == "__main__":
     app.debug = True

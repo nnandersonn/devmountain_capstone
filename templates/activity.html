@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="/activity" method="POST" novalidate>
+    {{form.csrf_token}}
+    {{form.activity_name.label}}: {{form.activity_name}} 
+    {%for err in form.activity_name.errors%}
+        <span class="flash">{{err}}</span>
+    {% endfor %}<br>
+
+    {{form.pet_select.label}}: {{form.pet_select}}
+    {%for err in form.pet_select.errors%}
+        <span class="flash">{{err}}</span>
+    {% endfor %} <br>
+
+    {{form.activity_type.label}}: {{form.activity_type}}
+    {%for err in form.activity_type.errors%}
+        <span class="flash">{{err}}</span>
+    {% endfor %} <br>
+    
+
+    {{form.submit}}
+</form>
+{% endblock %}

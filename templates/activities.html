@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+Activity Page! <br><br>
+
+{% for activity in current_user.activities %}
+    {{activity.activity_name}} <br>
+    {{activity.activity_type}} <br> <br>
+{% endfor %}
+
+Add Activity: <a href="/activity">Click</a>
+
+{% endblock %}

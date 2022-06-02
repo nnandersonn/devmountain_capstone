@@ -15,6 +15,8 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(64))
     email = db.Column(db.String(64))
 
+    pets = db.relationship("Pet")
+
     def __repr__(self):
         return f"<User user_id={self.user_id} email={self.email}>"
 
@@ -25,11 +27,13 @@ class Pet(db.Model):
 
     pet_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     pet_name = db.Column(db.String(64))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    user_id = db.Column(db.Integer, db.ForeignKey(User.user_id))
     breed = db.Column(db.String(64))
     birthday = db.Column(db.Date)
 
-    user = db.relationship("User", backref=db.backref('pets'))
+    pet_activities = db.relationship("Pet_Activity")
+    # friends = db.relationship("Friend")
+    # user = db.relationship("User", backref=db.backref('pets'))
 
     def __repr__(self):
         return f"<Pet pet_id={self.pet_id} name={self.pet_name} birthday={self.birthday}>"
@@ -41,11 +45,23 @@ class Activity(db.Model):
     __tablename__ = 'activities'
 
     activity_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    pet_id = db.Column(db.Integer, db.ForeignKey('pets.pet_id'))
-    activity_date = db.Column(db.Date)
+    activity_name = db.Column(db.String(64))
     activity_type = db.Column(db.String(64))
 
-    pet = db.relationship("Pet", backref=db.backref("activities"))
+    gps_points = db.relationship("GPS_Point")
+
+    # pet_activity = db.relationship("Pet_Activity", backref=db.backref("activities"))
+
+
+class Pet_Activity(db.Model):
+    """Junction table to join many pets to many activities"""
+
+    __tablename__ = 'pet_activities'
+    pet_activity_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    pet_id = db.Column(db.Integer, db.ForeignKey(Pet.pet_id))
+    activity_id = db.Column(db.Integer, db.ForeignKey(Activity.activity_id))
+    
+    activies = db.relationship("Activity")
 
 
 class GPS_Point(db.Model):
@@ -54,7 +70,7 @@ class GPS_Point(db.Model):
     __tablename__ = 'gps_points'
 
     gps_point_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    activity_id = db.Column(db.Integer, db.ForeignKey('activities.activity_id'))
+    activity_id = db.Column(db.Integer, db.ForeignKey(Activity.activity_id))
     time = db.Column(db.DateTime)
     longitude = db.Column(db.Float)
     latitude = db.Column(db.Float)
@@ -62,7 +78,7 @@ class GPS_Point(db.Model):
     distance = db.Column(db.Float)
     speed = db.Column(db.Float)
 
-    activity = db.relationship("Activity", backref=db.backref("gps_points"))
+    # activity = db.relationship("Activity", backref=db.backref("gps_points"))
 
 
 class Friend(db.Model):
@@ -71,11 +87,11 @@ class Friend(db.Model):
     __tablename__ = 'friends'
 
     friend_list_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    pet_id = db.Column(db.Integer, db.ForeignKey('pets.pet_id'))
-    friend_id = db.Column(db.Integer, db.ForeignKey('pets.pet_id'))
+    pet_id = db.Column(db.Integer, db.ForeignKey(Pet.pet_id))
+    friend_id = db.Column(db.Integer, db.ForeignKey(Pet.pet_id))
 
-    pet = db.relationship("Pet", foreign_keys=[pet_id])
-    friend = db.relationship("Pet", foreign_keys=[friend_id])
+    # pet = db.relationship("Pet", foreign_keys=[pet_id])
+    # friend = db.relationship("Pet", foreign_keys=[friend_id])
     
 
 def connect_to_db(app):
