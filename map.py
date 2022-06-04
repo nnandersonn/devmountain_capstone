@@ -17,4 +17,5 @@ def create_map(longitude, latitude, speed):
         marker=dict(color=speed, size=8)
     )
 
-    map.show()
+    m_h = map.to_html()
+    return m_h

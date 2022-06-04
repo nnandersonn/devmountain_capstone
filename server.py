@@ -1,5 +1,6 @@
 from random import choices
 from sqlite3 import connect
+from turtle import distance
 from flask import Flask, render_template, redirect, request, flash, session
 from wtforms import Form, BooleanField, StringField, DateField, PasswordField, SubmitField, SelectField, SelectMultipleField, validators, IntegerField
 from wtforms.validators import InputRequired, Email
@@ -176,8 +177,24 @@ def activity():
 @app.route('/activity/<activity_id>', methods=["GET"])
 def display_activity(activity_id):
     activity = Activity.query.filter_by(activity_id = activity_id).first()
+    points = GPS_Point.query.filter_by(activity_id=activity_id).order_by('time')
+    longitude = []
+    latitude = []
+    elevation = []
+    speed = []
+    distance = []
+    for point in points:
+        longitude.append(point.longitude)
+        latitude.append(point.latitude)
+        elevation.append(point.elevation)
+        speed.append(point.speed)
+        distance.append(point.distance)
+    m_h = create_map(longitude, latitude, speed)
 
-    return render_template('display_activity.html', activity = activity)
+
+    return render_template('display_activity.html', activity = activity, m_h = m_h)
+
+
 
 class RegistrationForm(FlaskForm):
     email = StringField('Email Address', [InputRequired('Please enter your email address.'), Email('This field requires a valid email address')])
