@@ -11,12 +11,11 @@ import os
 
 from model import Pet_Activity, User, Pet, Activity, GPS_Point, Friend, connect_to_db, db
 from gpx import parse_file
+from map import create_map
 
 app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
-# login_manager = LoginManager()
-# login_manager.init_app(app)
 
 app.secret_key = "testarooni"
 
@@ -159,8 +158,12 @@ def activity():
             db.session.commit()
 
         file = request.files.get('gpx_file')
-        print(dir(file))
-        # latitude, longitude, elevation, time, seg_distance, seg_speed = parse_file(file)
+        
+        latitude, longitude, elevation, time, seg_distance, seg_speed = parse_file(file)
+        for i in range(len(latitude)):
+            gps_point = GPS_Point(activity_id=activity_id, time=time[i], longitude=longitude[i], latitude=latitude[i], elevation=elevation[i], distance=seg_distance[i], speed=seg_speed[i])
+            db.session.add(gps_point)
+            db.session.commit()
         
 
         return render_template('activities.html')
@@ -169,26 +172,6 @@ def activity():
 
 
 
-# @app.route('/activity', methods=["POST"])
-# def submit_activity():
-#     activity_name = request.form["activity_name"]
-#     activity_type = request.form["activity_type"]
-#     # file = request.FILES["gpx_file"]
-#     activity = Activity(activity_name = activity_name, activity_type = activity_type)
-#     db.session.add(activity)
-#     db.session.commit()
-#     activity_id = activity.activity_id
-
-#     # parse_file(file)
-#     print(request.gpx_file.data)
-#     pets = request.form.getlist('pet_select')
-#     print(pets)
-#     for pet in pets:
-#         pet_activity = Pet_Activity(pet_id = pet, activity_id = activity_id)
-#         db.session.add(pet_activity)
-#     db.session.commit()
-
-#     return render_template('activities.html')
 
 @app.route('/activity/<activity_id>', methods=["GET"])
 def display_activity(activity_id):

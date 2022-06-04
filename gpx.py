@@ -4,8 +4,8 @@ import plotly.express as px
 
 
 def parse_file(file):
-    gpx_file = open(file, 'r')
-    gpx = gpxpy.parse(gpx_file)
+    
+    gpx = gpxpy.parse(file)
 
     latitude = []
     longitude = []
@@ -39,20 +39,24 @@ def parse_file(file):
                 
                 previous_point = point
 
-    map = px.line_mapbox(
-        lon = longitude,
-        lat = latitude,
-        mapbox_style="carto-positron",
-        # text = elevation
-        zoom = 15
-    )
+    # map = px.line_mapbox(
+    #     lon = longitude,
+    #     lat = latitude,
+    #     mapbox_style="carto-positron",
+    #     # text = elevation
+    #     zoom = 15
+    # )
 
-    map.add_scattermapbox(
-        lon = longitude,
-        lat = latitude,
-        hovertext = seg_speed,
-        marker=dict(color=seg_speed, size=8)
-    )
+    # map.add_scattermapbox(
+    #     lon = longitude,
+    #     lat = latitude,
+    #     hovertext = seg_speed,
+    #     marker=dict(color=seg_speed, size=8)
+    # )
 
-    map.show()
+    # map.show()
+    # fig_html = map.to_html()
+
+    
+
     return [latitude, longitude, elevation, time, seg_distance, seg_speed]
