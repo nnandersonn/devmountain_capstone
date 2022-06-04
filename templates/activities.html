@@ -3,6 +3,17 @@
 {% block content %}
 Activity Page! <br><br>
 
+{% for pet in current_user.pets %}
+    
+    {% for p_a in pet.pet_activities%}
+        {{p_a.activities.activity_name}}
+        <a href="/activity/{{p_a.activity_id}}">View Details</a>
+        
+        <br>
+        
+    {%endfor%}
+{% endfor %}
+<br>
 {% for activity in current_user.activities %}
     {{activity.activity_name}} <br>
     {{activity.activity_type}} <br> <br>

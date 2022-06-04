@@ -4,9 +4,13 @@ from flask import Flask, render_template, redirect, request, flash, session
 from wtforms import Form, BooleanField, StringField, DateField, PasswordField, SubmitField, SelectField, SelectMultipleField, validators, IntegerField
 from wtforms.validators import InputRequired, Email
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
+from werkzeug.utils import secure_filename
+import os
 
 from model import Pet_Activity, User, Pet, Activity, GPS_Point, Friend, connect_to_db, db
+from gpx import parse_file
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -131,35 +135,66 @@ def update_pet(pet_id):
     
 @app.route('/activities', methods=["GET"])
 def activities():
+    
     return render_template('activities.html')
 
-@app.route('/activity', methods=["GET"])
+@app.route('/activity', methods=["GET", "POST"])
 def activity():
     form = ActivityForm()
-    user_pets = []
     if current_user.pets is not None:
-        for pets in current_user.pets:
-            user_pets.append((pets.pet_id, pets.pet_name))
-    form.pet_select.choices = user_pets
+        form.pet_select.choices = [(pet.pet_id, pet.pet_name) for pet in current_user.pets]
+
+    if form.validate_on_submit():
+        activity_name = form.activity_name.data
+        activity_type = form.activity_type.data
+        activity = Activity(activity_name=activity_name, activity_type=activity_type)
+        db.session.add(activity)
+        db.session.commit()
+        activity_id = activity.activity_id
+
+        pets = form.pet_select.data
+        for pet in pets:
+            pet_activity = Pet_Activity(pet_id = pet, activity_id = activity_id)
+            db.session.add(pet_activity)
+            db.session.commit()
+
+        file = request.files.get('gpx_file')
+        print(dir(file))
+        # latitude, longitude, elevation, time, seg_distance, seg_speed = parse_file(file)
+        
+
+        return render_template('activities.html')
+
     return render_template('activity.html', form=form)
 
-@app.route('/activity', methods=["POST"])
-def submit_activity():
-    activity_name = request.form["activity_name"]
-    activity_type = request.form["activity_type"]
-    activity = Activity(activity_name = activity_name, activity_type = activity_type)
-    db.session.add(activity)
-    db.session.commit()
-    activity_id = activity.activity_id
-    
-    pets = request.form.getlist('pet_select')
-    print(pets)
-    for pet in pets:
-        pet_activity = Pet_Activity(pet_id = pet, activity_id = activity_id)
-        db.session.add(pet_activity)
-    db.session.commit()
 
-    return render_template('activities.html')
+
+# @app.route('/activity', methods=["POST"])
+# def submit_activity():
+#     activity_name = request.form["activity_name"]
+#     activity_type = request.form["activity_type"]
+#     # file = request.FILES["gpx_file"]
+#     activity = Activity(activity_name = activity_name, activity_type = activity_type)
+#     db.session.add(activity)
+#     db.session.commit()
+#     activity_id = activity.activity_id
+
+#     # parse_file(file)
+#     print(request.gpx_file.data)
+#     pets = request.form.getlist('pet_select')
+#     print(pets)
+#     for pet in pets:
+#         pet_activity = Pet_Activity(pet_id = pet, activity_id = activity_id)
+#         db.session.add(pet_activity)
+#     db.session.commit()
+
+#     return render_template('activities.html')
+
+@app.route('/activity/<activity_id>', methods=["GET"])
+def display_activity(activity_id):
+    activity = Activity.query.filter_by(activity_id = activity_id).first()
+
+    return render_template('display_activity.html', activity = activity)
 
 class RegistrationForm(FlaskForm):
     email = StringField('Email Address', [InputRequired('Please enter your email address.'), Email('This field requires a valid email address')])
@@ -188,9 +223,11 @@ class PetEditForm(FlaskForm):
 class ActivityForm(FlaskForm):
     activity_name = StringField("Activity Title", [InputRequired("Please enter a name for your activity")])
     activity_type = SelectField("Activity Type", choices=["Walk", "Run", "Hike", "Swim", "Other"])
+    pet_select = SelectMultipleField("Pet Select", coerce=int)
+
+    gpx_file = FileField("GPX File")
+
     submit = SubmitField("Create Activity")
-    
-    pet_select = SelectMultipleField("Pet Select")
 
 if __name__ == "__main__":
     app.debug = True
