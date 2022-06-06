@@ -5,6 +5,12 @@ body {
     justify-content: center;
     border: solid black thick;
     margin: auto;
+    height: 100%;
+}
+
+#map {
+    height: 600px;
+    width: 80%;
 }
 
 .title {

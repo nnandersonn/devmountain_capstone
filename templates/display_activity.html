@@ -3,5 +3,17 @@
 {% block content %}  
     {{activity.activity_name}}
     {{activity.activity_type}} <br>
+
+    <script>
+        var lng = {{lng}}
+        var lat = {{lat}}
+
+    </script>
+
+    <h1>Google Maps</h1>
+
+    <div id="map"></div>
+
     <iframe srcdoc="{{m_h}}" height="600" width="900" title="Iframe Example"></iframe>
+    
 {% endblock %}

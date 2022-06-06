@@ -8,6 +8,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
+import json
 import os
 
 from model import Pet_Activity, User, Pet, Activity, GPS_Point, Friend, connect_to_db, db
@@ -183,16 +184,21 @@ def display_activity(activity_id):
     elevation = []
     speed = []
     distance = []
+    path = []
     for point in points:
         longitude.append(point.longitude)
         latitude.append(point.latitude)
         elevation.append(point.elevation)
         speed.append(point.speed)
         distance.append(point.distance)
+        dict = {"lat": point.latitude, "lng": point.longitude}
+        path.append(dict)
     m_h = create_map(longitude, latitude, speed)
+    jsonPath = json.dumps(path)
+    print(jsonPath)
 
 
-    return render_template('display_activity.html', activity = activity, m_h = m_h)
+    return render_template('display_activity.html', activity = activity, m_h = m_h, jsonPath = jsonPath, lng=longitude, lat=latitude)
 
 
 
