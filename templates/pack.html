@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-{% for friend in friends %}
-    {{friend.pet_name}}
+<h3>The Pack</h3>
+{% for pet in pack %}
+    {{pet.pet_name}} <br>
+    Total Active Miles: {{total_distances[pet.pet_name]}}
+    <br> <br>
 {% endfor %}
+<br><br>
 
 <form action="/pack" method="POST" novalidate>
     {{form.csrf_token}}

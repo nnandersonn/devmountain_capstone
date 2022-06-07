@@ -212,10 +212,9 @@ def display_activity(activity_id):
         dict = {"lat": point.latitude, "lng": point.longitude}
         path.append(dict)
     m_h = create_map(longitude, latitude, speed)
-    max_speed = round(max(speed)*2.236936, 2)
-    avg_speed = round((sum(speed)/len(speed))*2.236936, 2)
-    total_distance = round(sum(distance)/1609.344, 2)
-
+    max_speed = get_max_speed(activity_id)
+    avg_speed = get_avg_speed(activity_id)
+    total_distance = get_total_distance(activity_id)
 
     return render_template('display_activity.html', activity = activity, m_h = m_h, max_speed=max_speed, avg_speed=avg_speed, total_distance=total_distance, lng=longitude, lat=latitude)
 
@@ -223,11 +222,21 @@ def display_activity(activity_id):
 @app.route('/pack', methods=["GET", "POST"])
 def display_pack():
     form = PetSearchForm()
-    friends = set()
+    pack = set()
+    total_distances={}
     for pet in current_user.pets:
+        pack.add(pet)
+        total_distance = total_distance_for_pet(pet.pet_id)
+        total_distances[pet.pet_name] = total_distance
         existing_friends = Friend.query.filter_by(pet_id = pet.pet_id).all()
         for existing_friend in existing_friends:
-            friends.add(existing_friend.pet)
+            friend_id = existing_friend.friend_id
+            friend = Pet.query.filter_by(pet_id = friend_id).first()
+            pack.add(friend)
+            total_distance = total_distance_for_pet(friend_id)
+            total_distances.update({friend.pet_name: total_distance})
+            
+    print(total_distances)
 
     if form.validate_on_submit():
         name_search = form.name_search.data
@@ -235,7 +244,7 @@ def display_pack():
 
         return render_template('pack_search.html', possible_matches=possible_matches)
 
-    return render_template('pack.html', form=form, friends=friends)
+    return render_template('pack.html', form=form, pack=pack, total_distances=total_distances)
 
 
 @app.route('/add_friend/<friend_id>', methods=["GET", "POST"])
@@ -244,7 +253,6 @@ def add_to_pack(friend_id):
         existing_friends = Friend.query.filter_by(pet_id = pet.pet_id).all()
         print("Existing friends:", existing_friends)
         if len(existing_friends) == 0:
-            print("No friends, but now we should be adding")
             friend = Friend(pet_id = pet.pet_id, friend_id = friend_id)
             reverse_friend = Friend(pet_id = friend_id, friend_id = pet.pet_id)
             db.session.add(friend)
@@ -253,16 +261,14 @@ def add_to_pack(friend_id):
             flash('Your pack has grown')
         for existing_friend in existing_friends:
             if existing_friend.friend_id == friend_id:
-                print('IF Statement')
                 flash("This pet is already in your pack!")
                 return render_template('homepage.html')
             else:
-                print("Else statement")
                 friend = Friend(pet_id = pet.pet_id, friend_id = friend_id)
                 reverse_friend = Friend(pet_id = friend_id, friend_id = pet.pet_id)
                 db.session.add(friend)
                 db.session.add(reverse_friend)
-                db.session.commmit()
+                db.session.commit()
                 flash('Your pack has grown')
 
         print(pet.pet_name)
@@ -308,8 +314,47 @@ class ActivityForm(FlaskForm):
     submit = SubmitField("Create Activity")
 
 class PetSearchForm(FlaskForm):
-    name_search = StringField("Search the name of your future pack member", [InputRequired("Enter the name of your furry friend")] )
+    name_search = StringField("Add someone to the pack", [InputRequired("Enter the name of your furry friend")] )
     search = SubmitField("Search")
+
+
+def get_total_distance(activity_id):
+    points = GPS_Point.query.filter_by(activity_id = activity_id).all()
+    distance = []
+    for point in points:
+        distance.append(point.distance)
+    total_distance = round(sum(distance)/1609.344, 2)
+    return total_distance
+
+def total_distance_for_pet(pet_id):
+    pet_activities = Pet_Activity.query.filter_by(pet_id=pet_id).all()
+    grand_total=0
+    activity_ids = [p_a.activity_id for p_a in pet_activities]
+    for activity_id in activity_ids:
+        activities = Activity.query.filter_by(activity_id=activity_id).all()
+        for activity in activities:
+            grand_total += get_total_distance(activity.activity_id)
+
+    return round(grand_total, 2)
+
+def get_max_speed(activity_id):
+    points = GPS_Point.query.filter_by(activity_id = activity_id).all()
+    speed = []
+    for point in points:
+        speed.append(point.speed)
+    max_speed = round(max(speed)*2.236936, 2)
+    return max_speed
+
+def get_avg_speed(activity_id):
+    points = GPS_Point.query.filter_by(activity_id = activity_id).all()
+    speed = []
+    for point in points:
+        speed.append(point.speed)
+    avg_speed = round((sum(speed)/len(speed))*2.236936, 2)
+    return avg_speed
+
+
+
 
 
 if __name__ == "__main__":
