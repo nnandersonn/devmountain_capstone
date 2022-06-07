@@ -17,6 +17,14 @@ Registration page!
     {%for err in form.email.errors%}
         <span class="flash">{{err}}</span>
     {% endfor %}<br>
+    {{form.city.label}}: {{form.city}} 
+    {%for err in form.city.errors%}
+        <span class="flash">{{err}}</span>
+    {% endfor %}<br>
+    {{form.state.label}}: {{form.state}} 
+    {%for err in form.state.errors%}
+        <span class="flash">{{err}}</span>
+    {% endfor %}<br>
     {{form.password.label}}: {{form.password}} 
     {%for err in form.password.errors%}
         <span class="flash">{{err}}</span>

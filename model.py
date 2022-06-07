@@ -13,6 +13,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(64))
     first_name = db.Column(db.String(64))
     last_name = db.Column(db.String(64))
+    city = db.Column(db.String(64))
+    state = db.Column(db.String(64))
     email = db.Column(db.String(64))
 
     pets = db.relationship("Pet", backref='users')
@@ -46,6 +48,7 @@ class Activity(db.Model):
     activity_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     activity_name = db.Column(db.String(64))
     activity_type = db.Column(db.String(64))
+    date = db.Column(db.Date)
 
     gps_points = db.relationship("GPS_Point", backref='activities')
     def __repr__(self):
@@ -88,7 +91,7 @@ class Friend(db.Model):
     pet_id = db.Column(db.Integer, db.ForeignKey('pets.pet_id'))
     friend_id = db.Column(db.Integer, db.ForeignKey('pets.pet_id'))
 
-    # pet = db.relationship("Pet", foreign_keys=[pet_id])
+    pet = db.relationship("Pet", foreign_keys=[pet_id])
     # friend = db.relationship("Pet", foreign_keys=[friend_id])
     
 

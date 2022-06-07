@@ -17,6 +17,11 @@
     {%for err in form.activity_type.errors%}
         <span class="flash">{{err}}</span>
     {% endfor %} <br>
+
+    {{form.date.label}}: {{form.date}}
+    {%for err in form.date.errors%}
+        <span class="flash">{{err}}</span>
+    {% endfor %} <br>
     
     {{form.gpx_file.label}}: {{form.gpx_file}}
     {%for err in form.gpx_file.errors%}

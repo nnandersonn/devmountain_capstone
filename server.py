@@ -8,6 +8,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
+from sqlalchemy import delete
 import json
 import os
 
@@ -45,9 +46,11 @@ def check_registration():
     password = request.form['password']
     first_name = request.form['first_name']
     last_name = request.form['last_name']
+    city = request.form['city']
+    state = request.form['state']
     match = User.query.filter_by(email=email).first()
     if match is None:
-        user = User(email = email, password = password, first_name = first_name, last_name = last_name)
+        user = User(email = email, password = password, first_name = first_name, last_name = last_name, city = city, state = state)
         db.session.add(user)
         db.session.commit()
         flash('Account created!')
@@ -148,7 +151,8 @@ def activity():
     if form.validate_on_submit():
         activity_name = form.activity_name.data
         activity_type = form.activity_type.data
-        activity = Activity(activity_name=activity_name, activity_type=activity_type)
+        date = form.date.data
+        activity = Activity(activity_name=activity_name, date = date, activity_type=activity_type)
         db.session.add(activity)
         db.session.commit()
         activity_id = activity.activity_id
@@ -173,12 +177,26 @@ def activity():
     return render_template('activity.html', form=form)
 
 
+@app.route('/activity/delete/<activity_id>', methods=["GET", "POST"])
+def remove_activity(activity_id):
+    activity = Activity.query.filter_by(activity_id = activity_id).first()
+    pet_activities = Pet_Activity.query.filter_by(activity_id=activity_id)
+    for p_a in pet_activities:
+        db.session.delete(p_a)
+    gps_points = GPS_Point.query.filter_by(activity_id=activity_id)
+    for gps_point in gps_points:
+        db.session.delete(gps_point)
+    db.session.delete(activity)
+    db.session.commit()
+    flash(f'Activity {activity_id} successfully removed')
+    return redirect('/')
 
 
 @app.route('/activity/<activity_id>', methods=["GET"])
 def display_activity(activity_id):
-    activity = Activity.query.filter_by(activity_id = activity_id).first()
+    
     points = GPS_Point.query.filter_by(activity_id=activity_id).order_by('time')
+    activity = Activity.query.filter_by(activity_id=activity_id).first()
     longitude = []
     latitude = []
     elevation = []
@@ -194,19 +212,69 @@ def display_activity(activity_id):
         dict = {"lat": point.latitude, "lng": point.longitude}
         path.append(dict)
     m_h = create_map(longitude, latitude, speed)
-    jsonPath = json.dumps(path)
-    print(jsonPath)
+    max_speed = round(max(speed)*2.236936, 2)
+    avg_speed = round((sum(speed)/len(speed))*2.236936, 2)
+    total_distance = round(sum(distance)/1609.344, 2)
 
 
-    return render_template('display_activity.html', activity = activity, m_h = m_h, jsonPath = jsonPath, lng=longitude, lat=latitude)
+    return render_template('display_activity.html', activity = activity, m_h = m_h, max_speed=max_speed, avg_speed=avg_speed, total_distance=total_distance, lng=longitude, lat=latitude)
 
 
+@app.route('/pack', methods=["GET", "POST"])
+def display_pack():
+    form = PetSearchForm()
+    friends = set()
+    for pet in current_user.pets:
+        existing_friends = Friend.query.filter_by(pet_id = pet.pet_id).all()
+        for existing_friend in existing_friends:
+            friends.add(existing_friend.pet)
+
+    if form.validate_on_submit():
+        name_search = form.name_search.data
+        possible_matches = Pet.query.filter_by(pet_name=name_search).all()
+
+        return render_template('pack_search.html', possible_matches=possible_matches)
+
+    return render_template('pack.html', form=form, friends=friends)
+
+
+@app.route('/add_friend/<friend_id>', methods=["GET", "POST"])
+def add_to_pack(friend_id):
+    for pet in current_user.pets:
+        existing_friends = Friend.query.filter_by(pet_id = pet.pet_id).all()
+        print("Existing friends:", existing_friends)
+        if len(existing_friends) == 0:
+            print("No friends, but now we should be adding")
+            friend = Friend(pet_id = pet.pet_id, friend_id = friend_id)
+            reverse_friend = Friend(pet_id = friend_id, friend_id = pet.pet_id)
+            db.session.add(friend)
+            db.session.add(reverse_friend)
+            db.session.commit()
+            flash('Your pack has grown')
+        for existing_friend in existing_friends:
+            if existing_friend.friend_id == friend_id:
+                print('IF Statement')
+                flash("This pet is already in your pack!")
+                return render_template('homepage.html')
+            else:
+                print("Else statement")
+                friend = Friend(pet_id = pet.pet_id, friend_id = friend_id)
+                reverse_friend = Friend(pet_id = friend_id, friend_id = pet.pet_id)
+                db.session.add(friend)
+                db.session.add(reverse_friend)
+                db.session.commmit()
+                flash('Your pack has grown')
+
+        print(pet.pet_name)
+    return render_template('homepage.html')
 
 class RegistrationForm(FlaskForm):
     email = StringField('Email Address', [InputRequired('Please enter your email address.'), Email('This field requires a valid email address')])
     first_name = StringField('First Name', [InputRequired('Please enter your first name')])
     last_name = StringField('Last Name', [InputRequired('Please enter your last name')])
     password = PasswordField('Create your password', [InputRequired('Please enter a password')])
+    city = StringField("City", [InputRequired("Enter City of residence.")])
+    state = StringField("State", [InputRequired("Enter the State of residence.")])
     submit = SubmitField("Register")
 
 class LoginForm(FlaskForm):
@@ -218,7 +286,10 @@ class PetRegistrationForm(FlaskForm):
     name = StringField("Name", [InputRequired("Enter your pet's name")] )
     breed = StringField("Breed", [InputRequired("Enter the breed of your pet")])
     birthday = DateField("Birthday", [InputRequired("Enter your pet's birthday (or best guess)")])
+    
+
     submit = SubmitField("Add Pet")
+    
 
 class PetEditForm(FlaskForm):
     name = StringField("Name", [InputRequired("Update your pet's name")] )
@@ -230,10 +301,16 @@ class ActivityForm(FlaskForm):
     activity_name = StringField("Activity Title", [InputRequired("Please enter a name for your activity")])
     activity_type = SelectField("Activity Type", choices=["Walk", "Run", "Hike", "Swim", "Other"])
     pet_select = SelectMultipleField("Pet Select", coerce=int)
+    date = DateField("Date", [InputRequired("Enter the date of the activity")])
 
     gpx_file = FileField("GPX File")
 
     submit = SubmitField("Create Activity")
+
+class PetSearchForm(FlaskForm):
+    name_search = StringField("Search the name of your future pack member", [InputRequired("Enter the name of your furry friend")] )
+    search = SubmitField("Search")
+
 
 if __name__ == "__main__":
     app.debug = True

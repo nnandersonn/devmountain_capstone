@@ -1,0 +1,12 @@
+{%extends 'base.html'%}
+
+{% block content %}
+
+    {% for match in possible_matches %}
+        {{match.pet_name}} <br>
+        {{match.birthday}} <br>
+        Owner: {{match.users.first_name}} <br>
+        <a href="add_friend/{{match.pet_id}}">Add to Pack</a>
+    {% endfor %}
+
+{% endblock %}

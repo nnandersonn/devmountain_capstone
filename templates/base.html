@@ -19,6 +19,7 @@
         {% endif %}
         {% if current_user.is_authenticated %}
         <a href="/pets">Pets</a>
+        <a href="/pack">Pack</a>
         <a href="/profile">Profile</a>
         <a href="/activities">Activities</a>
         {% endif %}
@@ -44,7 +45,7 @@
     <br>
 
 
-    <script defer async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbfJTuoDgNb6rfl2GkwrjjObTWuf9UC3c&callback=initMap"></script>
+    <script defer async src="https://maps.googleapis.com/maps/api/js?key=APIKEYGOESHERE&callback=initMap"></script>
     <script  src="{{url_for('static', filename='app.js')}}"></script>
 </body>
 </html>

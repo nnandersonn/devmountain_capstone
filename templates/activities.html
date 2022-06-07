@@ -6,7 +6,9 @@ Activity Page! <br><br>
 {% for pet in current_user.pets %}
     
     {% for p_a in pet.pet_activities%}
-        {{p_a.activities.activity_name}}
+        {{p_a.activities.activity_name}}<br>
+        {{p_a.activities.date}} <br>
+        {{p_a.activities.activity_type}} with {{pet.pet_name}}
         <a href="/activity/{{p_a.activity_id}}">View Details</a>
         
         <br>

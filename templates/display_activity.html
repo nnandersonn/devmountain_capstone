@@ -1,19 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}  
-    {{activity.activity_name}}
-    {{activity.activity_type}} <br>
+    <h2>{{activity.activity_name}}
+    </h2>
+    <h3>Type: {{activity.activity_type}}</h3> <br>
 
     <script>
         var lng = {{lng}}
         var lat = {{lat}}
-
     </script>
+    {# <h1>Google Maps</h1>
+    <div id="map"></div> #}
 
-    <h1>Google Maps</h1>
+    Date: {{activity.date}} <br>
+    Max Speed: {{max_speed}}mph <br>
+    Avg Speed: {{avg_speed}}mph <br>
+    Total Distance: {{total_distance}}miles
+    <div id="plotly-map">
 
-    <div id="map"></div>
-
-    <iframe srcdoc="{{m_h}}" height="600" width="900" title="Iframe Example"></iframe>
-    
+    <iframe srcdoc="{{m_h}}" height=100% width=100% title="Iframe Example" seamless ></iframe>
+    </div>
+    <br>
+    Delete Activity:<a href="/activity/delete/{{activity.activity_id}}">Delete</a>
 {% endblock %}

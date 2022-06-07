@@ -8,9 +8,18 @@ body {
     height: 100%;
 }
 
+
 #map {
     height: 600px;
     width: 80%;
+}
+
+#plotly-map {
+    box-sizing: border-box;
+    align-content: center;
+    height: 400px;
+    width: 600px;
+
 }
 
 .title {
@@ -20,7 +29,6 @@ body {
 
 .nav {
     text-align: center;
-    border: solid green thin;
 }
 
 .flash {
@@ -28,5 +36,18 @@ body {
 }
 
 .content {
-    text-align: center;
+    border: red solid thin;
+    /* text-align: center; */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+    margin: 20px;
+    height: 100%;
+
+}
+
+iframe {
+    border: none;
 }

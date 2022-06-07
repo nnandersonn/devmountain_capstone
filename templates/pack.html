@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for friend in friends %}
+    {{friend.pet_name}}
+{% endfor %}
+
+<form action="/pack" method="POST" novalidate>
+    {{form.csrf_token}}
+    {{form.name_search.label}} <br>
+    {{form.name_search}} {{form.search}}
+
+</form>
+
+
+{% endblock %}
