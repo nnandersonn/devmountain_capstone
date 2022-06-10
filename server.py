@@ -9,18 +9,23 @@ from flask_wtf.file import FileField
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
 from sqlalchemy import delete
+from dotenv import load_dotenv
+import requests
 import json
 import os
 
 from model import Pet_Activity, User, Pet, Activity, GPS_Point, Friend, connect_to_db, db
 from gpx import parse_file
 from map import create_map
+from weather import get_forecast
 
 app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
+load_dotenv()
 
-app.secret_key = "testarooni"
+app.secret_key = os.getenv('SECRET_KEY')
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -31,7 +36,12 @@ def load_user(user_id):
 @app.route('/')
 def index():
     """Homepage"""
-    return render_template('homepage.html')
+    weather = None
+    if current_user.is_active:
+        weather = get_forecast(current_user.city)
+        print(weather)
+
+    return render_template('homepage.html', weather = weather)
 
 @app.route('/register', methods=["GET"])
 def register():
@@ -46,7 +56,7 @@ def check_registration():
     password = request.form['password']
     first_name = request.form['first_name']
     last_name = request.form['last_name']
-    city = request.form['city']
+    city = request.form['city'].capitalize()
     state = request.form['state']
     match = User.query.filter_by(email=email).first()
     if match is None:
@@ -54,7 +64,7 @@ def check_registration():
         db.session.add(user)
         db.session.commit()
         flash('Account created!')
-        return render_template('homepage.html')
+        return redirect('/')
     else:
         flash('Account already created with this email')
         return render_template('register.html', form=RegistrationForm())
@@ -74,13 +84,13 @@ def check_login():
         if match.password == password: 
             login_user(match)
             flash("You are successfully logged in!")
-            return render_template('homepage.html')
+            return redirect('/')
         else:
             flash("Email/Password not valid. Register for an account if you have not created one already")
-            return render_template('homepage.html')
+            return redirect('/')
     else:
             flash("Email/Password not valid. Register for an account if you have not created one already")
-            return render_template('homepage.html')
+            return redirect('/')
 
 @app.route('/profile')
 def profile():
@@ -94,21 +104,21 @@ def add_pet():
 
 @app.route('/add_pet', methods=["POST"])
 def create_pet():
-    pet_name = request.form['name']
-    breed = request.form['breed']
+    pet_name = request.form['name'].capitalize()
+    breed = request.form['breed'].capitalize()
     birthday = request.form['birthday']
     pet = Pet(pet_name = pet_name, user_id = current_user.user_id, breed = breed, birthday = birthday)
     db.session.add(pet)
     db.session.commit()
     flash(f"Your pet {pet_name} has been added to your account!")
-    return render_template('homepage.html')
+    return redirect('/')
 
 
 @app.route('/logout')
 def logout():
     logout_user()
     flash("You have been logged out")
-    return render_template('homepage.html')
+    return redirect('/')
 
 @app.route('/pets')
 def display_pets():
@@ -135,7 +145,7 @@ def update_pet(pet_id):
     pet.birthday = birthday
     db.session.commit()
     flash(f"{pet_name}'s info has been successfully updated!")
-    return render_template('homepage.html')
+    return redirect('/')
     
 @app.route('/activities', methods=["GET"])
 def activities():
@@ -236,7 +246,6 @@ def display_pack():
             total_distance = total_distance_for_pet(friend_id)
             total_distances.update({friend.pet_name: total_distance})
             
-    print(total_distances)
 
     if form.validate_on_submit():
         name_search = form.name_search.data
@@ -262,7 +271,7 @@ def add_to_pack(friend_id):
         for existing_friend in existing_friends:
             if existing_friend.friend_id == friend_id:
                 flash("This pet is already in your pack!")
-                return render_template('homepage.html')
+                return redirect('/')
             else:
                 friend = Friend(pet_id = pet.pet_id, friend_id = friend_id)
                 reverse_friend = Friend(pet_id = friend_id, friend_id = pet.pet_id)
@@ -272,7 +281,7 @@ def add_to_pack(friend_id):
                 flash('Your pack has grown')
 
         print(pet.pet_name)
-    return render_template('homepage.html')
+    return redirect('/')
 
 class RegistrationForm(FlaskForm):
     email = StringField('Email Address', [InputRequired('Please enter your email address.'), Email('This field requires a valid email address')])
@@ -353,6 +362,14 @@ def get_avg_speed(activity_id):
     avg_speed = round((sum(speed)/len(speed))*2.236936, 2)
     return avg_speed
 
+def get_activities(user):
+    all_activities = {}
+    for pet in user.pets:
+        for pet_activity in pet.pet_activities:
+            all_activities[pet.pet_id] = pet_activity.activities
+
+    return all_activities
+    
 
 
 

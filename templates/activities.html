@@ -1,26 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
-Activity Page! <br><br>
+<h2>Pick a pet to view</h2> 
+<br>
+
+<div class="tab">
+    {% for pet in current_user.pets%}
+        <button type="button" class="tablinks" onclick="openPet(event, '{{pet.pet_name}}')">{{pet.pet_name}}</button>
+    {% endfor %}
+</div>
 
 {% for pet in current_user.pets %}
-    
-    {% for p_a in pet.pet_activities%}
-        {{p_a.activities.activity_name}}<br>
-        {{p_a.activities.date}} <br>
-        {{p_a.activities.activity_type}} with {{pet.pet_name}}
-        <a href="/activity/{{p_a.activity_id}}">View Details</a>
-        
-        <br>
-        
-    {%endfor%}
-{% endfor %}
-<br>
-{% for activity in current_user.activities %}
-    {{activity.activity_name}} <br>
-    {{activity.activity_type}} <br> <br>
+    <div id="{{pet.pet_name}}" class="tabcontent">
+        <div class="card-container">
+            {% for p_a in pet.pet_activities%}
+                <div class="card">
+                    {{p_a.activities.activity_name}}<br>
+                    {{p_a.activities.date}} <br>
+                    <a href="/activity/{{p_a.activity_id}}">View Details</a>
+                </div>
+            
+            {%endfor%}
+        </div>
+    </div>
 {% endfor %}
 
-Add Activity: <a href="/activity">Click</a>
+
+<br>
+<form action="/activity">
+    <button type="submit">Add Activity</button>
+</form>
+
+
 
 {% endblock %}

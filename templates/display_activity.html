@@ -5,21 +5,30 @@
     </h2>
     <h3>Type: {{activity.activity_type}}</h3> <br>
 
+
+
+    <div class="activity-card-container">
+        <div class="activity-info-card">
+            Date: {{activity.date}} <br>
+            Max Speed: {{max_speed}}mph <br>
+            Avg Speed: {{avg_speed}}mph <br>
+            Total Distance: {{total_distance}}miles
+            
+        </div>
+        <div class="activity-map-card">
+            <div id="plotly-map">
+            <iframe srcdoc="{{m_h}}" title="Activity" seamless ></iframe>
+            </div>
+            <br>
+        </div>
+        <div class="activity-delete-card">
+            Delete Activity:<a href="/activity/delete/{{activity.activity_id}}">Delete</a>
+        </div>
+
     <script>
         var lng = {{lng}}
         var lat = {{lat}}
     </script>
     {# <h1>Google Maps</h1>
     <div id="map"></div> #}
-
-    Date: {{activity.date}} <br>
-    Max Speed: {{max_speed}}mph <br>
-    Avg Speed: {{avg_speed}}mph <br>
-    Total Distance: {{total_distance}}miles
-    <div id="plotly-map">
-
-    <iframe srcdoc="{{m_h}}" height=100% width=100% title="Iframe Example" seamless ></iframe>
-    </div>
-    <br>
-    Delete Activity:<a href="/activity/delete/{{activity.activity_id}}">Delete</a>
 {% endblock %}

@@ -7,7 +7,8 @@ def create_map(longitude, latitude, speed):
         lat = latitude,
         mapbox_style="carto-positron",
         # text = elevation
-        zoom = 15
+        zoom = 15,
+        height=800
     )
 
     map.add_scattermapbox(
@@ -15,6 +16,7 @@ def create_map(longitude, latitude, speed):
         lat = latitude,
         hovertext = speed,
         marker=dict(color=speed, size=8)
+        
     )
 
 
@@ -23,3 +25,5 @@ def create_map(longitude, latitude, speed):
 
     m_h = map.to_html()
     return m_h
+
+

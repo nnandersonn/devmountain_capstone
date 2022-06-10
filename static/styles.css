@@ -1,25 +1,207 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
 body {
     display: flex;
     flex-direction: column;
     width: 80%;
+    min-width: 320px;
     justify-content: center;
-    border: solid black thick;
     margin: auto;
     height: 100%;
+    background-color: #FBF8EB;
 }
 
+/* Nav Bar Styling */
+
+.header{
+    border: 1px solid #02222F;
+}
+
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: #308EA5;
+}
+
+.hamburger {
+    display: none;
+}
+
+.bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    background-color: #02222F;
+}
+
+.nav-menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-item {
+    margin-left: 5rem;
+}
+
+.nav-link{
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: #fdFFFF;
+}
+
+.nav-link:hover{
+    color: #F2c57c;
+}
+
+.nav-logo {
+    font-size: 2.1rem;
+    font-weight: 500;
+    color: #FDFFFF;
+}
+
+@media only screen and (max-width: 768px) {
+    .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 5rem;
+        flex-direction: column;
+        background-color: #fff;
+        width: 100%;
+        border-radius: 10px;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow:
+            0 10px 27px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-menu.active {
+        left: 0;
+    }
+
+    .nav-item {
+        margin: 2.5rem 0;
+    }
+
+    .hamburger {
+        display: block;
+        cursor: pointer;
+    }
+
+    .hamburger.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.active .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .hamburger.active .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+
+
+}
+
+/* end nav bar styling */
 
 #map {
     height: 600px;
     width: 80%;
 }
 
+
+
+.card-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #C7496F;
+    width: 40%;
+    margin: 20px;
+}
+
+.activity-card-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    border: green thick solid;
+}
+
+.activity-info-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #C7496F;
+    width: 20%;
+    min-width: 300px;
+    height: auto;
+    margin: auto;
+    padding: 20px;
+}
+
+.activity-map-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #C7496F;
+    width: 60%;
+    min-width: 300px;
+    height: 80vh;
+    min-height: 300px;
+    max-height: 800px;
+    margin: 20px;
+}
+
 #plotly-map {
     box-sizing: border-box;
     align-content: center;
-    height: 400px;
-    width: 600px;
+    height: 100%;
+    width: 100%;
+    border: blue solid thin;
 
+}
+
+.activity-delete-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #C7496F;
+    width: 15%;
+    min-width: 200px;
+    margin: 20px;
+}
+
+iframe {
+    border: none;
+    height: 100%;
+    width: 100%;
 }
 
 .title {
@@ -36,18 +218,62 @@ body {
 }
 
 .content {
-    border: red solid thin;
-    /* text-align: center; */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* justify-content: center; */
-    margin: 20px;
+    /* margin: 20px; */
     height: 100%;
 
 }
 
-iframe {
-    border: none;
+
+
+/* tabbed content styles */
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    background-color: #308EA5;
 }
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: 1px solid #02222F;
+    outline: none;
+    cursor: pointer;
+    padding: 8px;
+    transition: 0.3s;
+    color: white;
+    font-size: 16pt;
+    width: 150px;
+  }
+  
+  /* Change background color of buttons on hover */
+  .tab button:hover {
+    background-color: #F2c57c;
+  }
+  
+  /* Create an active/current tablink class */
+  .tab button.active {
+    background-color: #F2c57c;
+  }
+  
+  /* Style the tab content */
+  .tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #C7496F;
+    width: 100%;
+  }
+
+  .tabcontent {
+    animation: fadeEffect 1s; /* Fading effect takes 1 second */
+  }
+  
+  /* Go from zero to full opacity */
+  @keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }

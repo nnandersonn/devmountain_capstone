@@ -1,8 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content%}
+
+<div class="card-container">
 {% for pet in current_user.pets %}
-    {{pet.pet_name}} <br> 
-    <a href="/edit_pet/{{pet.pet_id}}">Edit</a> <br><br>
+    
+    <div class="card">
+        <h4>{{pet.pet_name}}</h4>
+        <a href="/edit_pet/{{pet.pet_id}}">Edit</a> 
+    </div>
+
 {% endfor %}
+</div>
+<form action="/add_pet">
+    <button type="submit">Add a Pet</button>
+</form>
+
+
+
 {% endblock %}

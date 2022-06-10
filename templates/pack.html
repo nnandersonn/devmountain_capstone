@@ -2,11 +2,15 @@
 
 {% block content %}
 <h3>The Pack</h3>
-{% for pet in pack %}
-    {{pet.pet_name}} <br>
-    Total Active Miles: {{total_distances[pet.pet_name]}}
-    <br> <br>
-{% endfor %}
+<div class="card-container">
+    {% for pet in pack %}
+        <div class="card">
+            {{pet.pet_name}} <br>
+            Total Active Miles: {{total_distances[pet.pet_name]}}
+        </div>
+        
+    {% endfor %}
+</div>
 <br><br>
 
 <form action="/pack" method="POST" novalidate>

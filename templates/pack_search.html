@@ -3,8 +3,9 @@
 {% block content %}
 
     {% for match in possible_matches %}
-        {{match.pet_name}} <br>
-        {{match.birthday}} <br>
+        Name: {{match.pet_name}} <br>
+        Birthday: {{match.birthday}} <br>
+        Location: {{match.users.city}}, {{match.users.state}} <br>
         Owner: {{match.users.first_name}} <br>
         <a href="add_friend/{{match.pet_id}}">Add to Pack</a>
     {% endfor %}

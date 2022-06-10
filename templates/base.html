@@ -4,26 +4,54 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
     <title>Document</title>
 </head>
 <body>
-    <div class="title">Track the Pack</div> 
-    <br>
+    <header class="header">
+        <nav class="navbar">
+            <a href="/" class="nav-logo">Track the Pack</a>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                {% if current_user.is_anonymous %}
+                <li class="nav-item">
+                    <a href="/register" class="nav-link">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/login" class="nav-link">Login</a>
+                </li>
+                {% endif %}
+                {% if current_user.is_authenticated %}
+                <li class="nav-item">
+                    <a href="/pets" class="nav-link">Pets</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/pack" class="nav-link">Pack</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/activities" class="nav-link">Activities</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profile" class="nav-link">Profile</a>
+                </li>
+                {% endif %}
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
 
-    <div class="nav">
-        <a href="/">Home</a>
-        {% if current_user.is_anonymous %}
-        <a href="/register">Register</a>
-        <a href="/login">Login</a>
-        {% endif %}
-        {% if current_user.is_authenticated %}
-        <a href="/pets">Pets</a>
-        <a href="/pack">Pack</a>
-        <a href="/profile">Profile</a>
-        <a href="/activities">Activities</a>
-        {% endif %}
-    </div> 
+    </header>
+
+
+    
     
     <br>
 
