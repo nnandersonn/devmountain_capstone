@@ -245,7 +245,7 @@ def display_pack():
             pack.add(friend)
             total_distance = total_distance_for_pet(friend_id)
             total_distances.update({friend.pet_name: total_distance})
-            
+    leaderboard = get_pack()
 
     if form.validate_on_submit():
         name_search = form.name_search.data
@@ -253,7 +253,7 @@ def display_pack():
 
         return render_template('pack_search.html', possible_matches=possible_matches)
 
-    return render_template('pack.html', form=form, pack=pack, total_distances=total_distances)
+    return render_template('pack.html', form=form, pack=pack, total_distances=total_distances, leaderboard=leaderboard)
 
 
 @app.route('/add_friend/<friend_id>', methods=["GET", "POST"])
@@ -370,6 +370,21 @@ def get_activities(user):
 
     return all_activities
     
+def get_pack():
+    pack = set()
+    total_distances={}
+    for pet in current_user.pets:
+        pack.add(pet)
+        total_distance = total_distance_for_pet(pet.pet_id)
+        total_distances[pet.pet_name] = total_distance
+        existing_friends = Friend.query.filter_by(pet_id = pet.pet_id).all()
+        for existing_friend in existing_friends:
+            friend_id = existing_friend.friend_id
+            friend = Pet.query.filter_by(pet_id = friend_id).first()
+            pack.add(friend)
+            total_distance = total_distance_for_pet(friend_id)
+            total_distances.update({friend.pet_name: total_distance})
+    return sorted(total_distances.items(), key= lambda ele:ele[1], reverse = True)
 
 
 

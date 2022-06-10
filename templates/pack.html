@@ -21,4 +21,10 @@
 </form>
 
 
+{% for position in leaderboard %}
+    {{position[0]}}
+    Total Miles: {{position[1]}}
+
+{% endfor %}
+
 {% endblock %}
