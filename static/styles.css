@@ -11,7 +11,13 @@ li {
 
 a {
     text-decoration: none;
+    color: #308EA5;
 }
+
+a:hover {
+    color: #02222F;
+}
+
 
 body {
     display: flex;
@@ -24,6 +30,13 @@ body {
     background-color: #FBF8EB;
 }
 
+img {
+    border: #F2c57c solid 5px;
+    border-style: outset;
+    box-shadow: #02222F 5px 5px;
+    margin: 10px;
+}
+
 /* Nav Bar Styling */
 
 .header{
@@ -31,6 +44,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    box-shadow: #02222F 5px 5px;
 }
 
 .navbar{
@@ -250,7 +264,7 @@ iframe {
 .tab button {
     background-color: inherit;
     float: left;
-    border: 1px solid #02222F;
+    box-shadow: #02222F 5px 5px;
     outline: none;
     cursor: pointer;
     padding: 8px;
@@ -287,3 +301,131 @@ iframe {
     from {opacity: 0;}
     to {opacity: 1;}
   }
+
+/* Leaderboard Styling */
+
+.leaderboard {
+    padding: 15px;
+    box-sizing: border-box;
+    width: 40%;
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    background-color: #308EA5;
+    border-radius: 15px;
+    box-shadow: #02222F 5px 5px;
+
+}
+
+.leaderboard-header {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.leaderboard-position {
+    box-sizing: border-box;
+    width: 15%;
+    display: flex;
+    justify-content: center;
+    /* border: green thin solid; */
+}
+.leaderboard-name {
+    box-sizing: border-box;
+    width: 42.5%;
+    display: flex;
+    justify-content: center;
+    /* border: blue thin solid; */
+}
+
+.leaderboard-distance {
+    box-sizing: border-box;
+    width: 42.5%;
+    display: flex;
+    justify-content: center;
+    /* border: red thin solid; */
+}
+
+.position-section {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+   
+}
+
+.pet-position {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    border: #308EA5 solid 2px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    
+    background-color: #F2c57c;
+    border-radius: 15px;
+}
+
+.leaderboard-position, .leaderboard-name, .leaderboard-distance  {
+    color: white; 
+    font-size: 16pt;
+    font-weight: 600;
+}
+
+.add-to-pack-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #F2c57c;
+    color: white;
+    font-size: 16pt;
+    font-weight: 600;
+    width: 30%;
+    min-width: 300px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border-radius: 15px;
+    box-shadow: #02222F 5px 5px;
+    padding: 10px;
+}
+
+.pet-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #F2c57c;
+    color: white;
+    font-size: 16pt;
+    font-weight: 600;
+    width: 30%;
+    min-width: 300px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border-radius: 15px;
+    box-shadow: #02222F 5px 5px;
+    padding: 10px;
+}
+
+.activity-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #F2c57c;
+    color: white;
+    font-size: 16pt;
+    font-weight: 600;
+    width: 30%;
+    min-width: 300px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border-radius: 15px;
+    box-shadow: #02222F 5px 5px;
+    padding: 10px;
+}

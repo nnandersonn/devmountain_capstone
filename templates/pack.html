@@ -1,30 +1,50 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h3>The Pack</h3>
-<div class="card-container">
-    {% for pet in pack %}
-        <div class="card">
-            {{pet.pet_name}} <br>
-            Total Active Miles: {{total_distances[pet.pet_name]}}
+<h3>Pack Leaderboard</h3>
+<div class="leaderboard">
+    <div class="leaderboard-header">
+        <div class="leaderboard-position">
+            Position
         </div>
+        <div class="leaderboard-name">
+            Name
+        </div>
+        <div class="leaderboard-distance">
+            Distance
+        </div>
+    </div>
+    {% for position in leaderboard %}
+    <div class="position-section">
         
+        <div class="pet-position">
+            <div class="leaderboard-position">
+                #{{loop.index}}
+            </div>
+            <div class="leaderboard-name">
+                {{position[0]}}
+            </div>
+            <div class="leaderboard-distance">
+                Total Miles: {{position[1]}}    
+            </div>
+            
+        </div>
+    </div>
     {% endfor %}
 </div>
-<br><br>
 
-<form action="/pack" method="POST" novalidate>
+<form action="/pack" method="POST" novalidate
+class="add-to-pack-card">
     {{form.csrf_token}}
-    {{form.name_search.label}} <br>
+    {{form.name_search.label}}
     {{form.name_search}} {{form.search}}
-
 </form>
 
 
-{% for position in leaderboard %}
-    {{position[0]}}
-    Total Miles: {{position[1]}}
 
-{% endfor %}
+
+
+
+
 
 {% endblock %}
