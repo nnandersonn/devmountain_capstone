@@ -15,7 +15,7 @@ a {
 }
 
 a:hover {
-    color: #02222F;
+    color: #C7496F;
 }
 
 
@@ -170,58 +170,6 @@ img {
     margin: 20px;
 }
 
-.activity-card-container {
-    display: flex;
-    width: 100%;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    border: green thick solid;
-}
-
-.activity-info-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 2px solid #C7496F;
-    width: 20%;
-    min-width: 300px;
-    height: auto;
-    margin: auto;
-    padding: 20px;
-}
-
-.activity-map-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 2px solid #C7496F;
-    width: 60%;
-    min-width: 300px;
-    height: 80vh;
-    min-height: 300px;
-    max-height: 800px;
-    margin: 20px;
-}
-
-#plotly-map {
-    box-sizing: border-box;
-    align-content: center;
-    height: 100%;
-    width: 100%;
-    border: blue solid thin;
-
-}
-
-.activity-delete-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 2px solid #C7496F;
-    width: 15%;
-    min-width: 200px;
-    margin: 20px;
-}
-
 iframe {
     border: none;
     height: 100%;
@@ -288,7 +236,6 @@ iframe {
   .tabcontent {
     display: none;
     padding: 6px 12px;
-    border: 1px solid #C7496F;
     width: 100%;
   }
 
@@ -428,4 +375,64 @@ iframe {
     border-radius: 15px;
     box-shadow: #02222F 5px 5px;
     padding: 10px;
+}
+
+
+.activity-card-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.activity-info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.activity-info-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #F2c57c;
+    color: white;
+    font-size: 16pt;
+    font-weight: 600;
+    border-radius: 15px;
+    box-shadow: #02222F 5px 5px;
+    padding: 10px;
+    width: 20%;
+    min-width: 300px;
+    height: auto;
+    margin: auto;
+}
+
+.activity-map-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60%;
+    min-width: 300px;
+    height: 80vh;
+    min-height: 300px;
+    max-height: 800px;
+    margin: 20px;
+}
+
+#plotly-map {
+    box-sizing: border-box;
+    align-content: center;
+    height: 100%;
+    width: 100%;
+    /* border-radius: 25px; */
+    /* padding: 5px; */
+    border: 5px solid #F2c57c;
+    border-style: outset;
+    background-color: #F2c57c;
+    box-shadow: #02222F 5px 5px;
+
+
 }

@@ -8,22 +8,25 @@
 
 
     <div class="activity-card-container">
-        <div class="activity-info-card">
-            Date: {{activity.date}} <br>
-            Max Speed: {{max_speed}}mph <br>
-            Avg Speed: {{avg_speed}}mph <br>
-            Total Distance: {{total_distance}}miles
-            
+        <div class="activity-info-container">
+            <div class="activity-info-card">
+                Date: {{activity.date}} <br>
+                Max Speed: {{max_speed}}mph <br>
+                Avg Speed: {{avg_speed}}mph <br>
+                Total Distance: {{total_distance}}miles
+            </div>
+            <div class="activity-info-card">
+                Delete Activity:<a href="/activity/delete/{{activity.activity_id}}">Delete</a>
+            </div>
         </div>
+       
         <div class="activity-map-card">
             <div id="plotly-map">
             <iframe srcdoc="{{m_h}}" title="Activity" seamless ></iframe>
             </div>
             <br>
         </div>
-        <div class="activity-delete-card">
-            Delete Activity:<a href="/activity/delete/{{activity.activity_id}}">Delete</a>
-        </div>
+        
 
     <script>
         var lng = {{lng}}
