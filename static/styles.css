@@ -34,7 +34,7 @@ img {
     border: #F2c57c solid 5px;
     border-style: outset;
     box-shadow: #02222F 5px 5px;
-    margin: 10px;
+    margin: 5px;
 }
 
 input[type=submit] {
@@ -43,12 +43,41 @@ input[type=submit] {
     background-color: #308EA5;
     border-radius: 15px;
     height: 30px;
-    width: 80px;
+    width: auto;
+    padding-left: 10px;
+    padding-right: 10px;
     border: none;
     box-shadow: #02222F 2px 2px;
     margin-top: 5px;
 }
 
+button {
+    color: white;
+    font-size: 11pt;
+    background-color: #308EA5;
+    border-radius: 15px;
+    height: 30px;
+    width: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: none;
+    box-shadow: #02222F 2px 2px;
+    margin-top: 5px;
+}
+
+button:hover {
+    color: white;
+    font-size: 11pt;
+    background-color: #F2c57c;
+    border-radius: 15px;
+    height: 30px;
+    width: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: none;
+    box-shadow: #02222F 2px 2px;
+    margin-top: 5px;
+}
 
 
 /* Nav Bar Styling */
@@ -122,7 +151,7 @@ input[type=submit] {
     .nav-menu {
         position: fixed;
         left: -100%;
-        top: 120px;
+        top: 175px;
         flex-direction: column;
         background-color: #308EA5;
         width: 100%;
@@ -227,21 +256,20 @@ iframe {
 /* Style the tab */
 .tab {
     overflow: hidden;
-    background-color: #308EA5;
 }
 
 /* Style the buttons that are used to open the tab content */
 .tab button {
-    background-color: inherit;
+    /* background-color: inherit; */
     float: left;
     box-shadow: #02222F 5px 5px;
     outline: none;
     cursor: pointer;
-    padding: 8px;
     transition: 0.3s;
     color: white;
     font-size: 16pt;
     width: 150px;
+    margin: 15px;
   }
   
   /* Change background color of buttons on hover */
@@ -508,4 +536,20 @@ iframe {
     min-width: 300px;
     height: auto;
     margin: 25px;
+}
+
+.activity-create-card {
+    text-align: left;
+    background-color: #F2c57c;
+    color: white;
+    font-size: 16pt;
+    font-weight: 600;
+    border-radius: 15px;
+    box-shadow: #02222F 5px 5px;
+    padding: 10px;
+    width: 20%;
+    min-width: 300px;
+    height: auto;
+    margin: 25px;
+    
 }

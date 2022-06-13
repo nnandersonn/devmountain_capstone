@@ -37,6 +37,7 @@ def load_user(user_id):
 def index():
     """Homepage"""
     weather = None
+    weather_sentence = None
     if current_user.is_active:
         weather = get_forecast(current_user.city)
         weather_sentence = should_i_walk(weather['current_temp'], weather['current_weather'])
@@ -319,7 +320,7 @@ class ActivityForm(FlaskForm):
     pet_select = SelectMultipleField("Pet Select", coerce=int)
     date = DateField("Date", [InputRequired("Enter the date of the activity")])
 
-    gpx_file = FileField("GPX File")
+    gpx_file = FileField("GPX File", [InputRequired("Upload a .gpx file")])
 
     submit = SubmitField("Create Activity")
 

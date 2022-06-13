@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action="/activity" method="POST" enctype="multipart/form-data" novalidate>
+<form action="/activity" method="POST" enctype="multipart/form-data" class="activity-create-card">
     {{form.csrf_token}}
-    {{form.activity_name.label}}: {{form.activity_name}} 
+    Title: {{form.activity_name}} 
     {%for err in form.activity_name.errors%}
         <span class="flash">{{err}}</span>
     {% endfor %}<br>
 
-    {{form.pet_select.label}}: {{form.pet_select}}
+    Select Pet(s): {{form.pet_select}}
     {%for err in form.pet_select.errors%}
         <span class="flash">{{err}}</span>
     {% endfor %} <br>
