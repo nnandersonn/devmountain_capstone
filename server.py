@@ -17,7 +17,7 @@ import os
 from model import Pet_Activity, User, Pet, Activity, GPS_Point, Friend, connect_to_db, db
 from gpx import parse_file
 from map import create_map
-from weather import get_forecast
+from weather import get_forecast, should_i_walk
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -39,9 +39,10 @@ def index():
     weather = None
     if current_user.is_active:
         weather = get_forecast(current_user.city)
-        print(weather)
+        weather_sentence = should_i_walk(weather['current_temp'], weather['current_weather'])
+        print( weather_sentence)
 
-    return render_template('homepage.html', weather = weather)
+    return render_template('homepage.html', weather = weather, weather_sentence=weather_sentence)
 
 @app.route('/register', methods=["GET"])
 def register():
@@ -198,7 +199,7 @@ def remove_activity(activity_id):
         db.session.delete(gps_point)
     db.session.delete(activity)
     db.session.commit()
-    flash(f'Activity {activity_id} successfully removed')
+    flash(f'Activity {activity.activity_name} successfully removed')
     return redirect('/')
 
 
@@ -351,7 +352,7 @@ def get_max_speed(activity_id):
     speed = []
     for point in points:
         speed.append(point.speed)
-    max_speed = round(max(speed)*2.236936, 2)
+    max_speed = round(max(speed), 2)
     return max_speed
 
 def get_avg_speed(activity_id):
@@ -359,7 +360,7 @@ def get_avg_speed(activity_id):
     speed = []
     for point in points:
         speed.append(point.speed)
-    avg_speed = round((sum(speed)/len(speed))*2.236936, 2)
+    avg_speed = round((sum(speed)/len(speed)), 2)
     return avg_speed
 
 def get_activities(user):

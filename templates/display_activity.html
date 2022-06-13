@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}  
-    <h2>{{activity.activity_name}}
-    </h2>
-    <h3>Type: {{activity.activity_type}}</h3> <br>
+    
 
 
 
     <div class="activity-card-container">
         <div class="activity-info-container">
+            <div class="activity-info-card">
+                <h2>{{activity.activity_name}}</h2>
+                <h3>Type: {{activity.activity_type}}</h3> 
+            </div>
             <div class="activity-info-card">
                 Date: {{activity.date}} <br>
                 Max Speed: {{max_speed}}mph <br>

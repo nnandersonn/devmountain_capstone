@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-Login page!
+Please login below
 
-<form action="/login" method="POST" novalidate>
+<form action="/login" method="POST" class="login-info-card" novalidate>
     {{form.csrf_token}}
-    {{form.email.label}}: {{form.email}} 
+    {{form.email.label}} {{form.email}} 
     {%for err in form.email.errors%}
         <span class="flash">{{err}}</span>
     {% endfor %}<br>
-    {{form.password.label}}: {{form.password}} 
+    {{form.password.label}} {{form.password}} 
     {%for err in form.password.errors%}
         <span class="flash">{{err}}</span>
     {% endfor %}<br> 

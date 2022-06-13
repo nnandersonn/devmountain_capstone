@@ -22,4 +22,20 @@ def get_forecast(city):
 
     return (weather)
 
-
+def should_i_walk(temp, condition):
+    
+    if temp < 32:
+        return "It is freezing out there! Bundle up."
+    elif temp < 64 and 'rain' in condition:
+        return "It's cold and rainy out. Don't forget that umbrella."
+    elif temp < 64:
+        return "It's cold out but no rain in sight!"
+    elif temp < 76 and 'rain' in condition:
+        return "It's a comfortable temperature but raining."
+    elif temp <76:
+        return "You couldn't ask for better weather! Get out there with your pack and enjoy!"
+    elif temp < 90:
+        return "It's a warm one out there! Brind water for you and your pack."
+    elif temp >= 90:
+        return "It's pretty hot out there. Are you sure you want to leave the house?"
+        

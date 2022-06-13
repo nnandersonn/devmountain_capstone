@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-Email: {{current_user.email}} <br>
-Name: {{current_user.first_name}} {{current_user.last_name}} <br>
 
+<div class="profile-card">
+    Email: {{current_user.email}} <br>
+    Name: {{current_user.first_name}} {{current_user.last_name}} <br>
+    City: {{current_user.city}} <br>
+    <a href="/logout">Logout</a>
+</div>
 
-<a href="/logout">Logout</a>
 {% endblock %}

@@ -3,29 +3,29 @@
 {% block content %}
 Registration page!
 
-<form action="/register" method="POST" novalidate>
+<form action="/register" method="POST" novalidate class="login-info-card">
     {{form.csrf_token}}
-    {{form.first_name.label}}: {{form.first_name}} 
+    {{form.first_name.label}} {{form.first_name}} 
     {%for err in form.first_name.errors%}
         <span class="flash">{{err}}</span>
     {% endfor %}<br>
-    {{form.last_name.label}}: {{form.last_name}}
+    {{form.last_name.label}} {{form.last_name}}
     {%for err in form.last_name.errors%}
         <span class="flash">{{err}}</span>
     {% endfor %} <br>
-    {{form.email.label}}: {{form.email}} 
+    {{form.email.label}} {{form.email}} 
     {%for err in form.email.errors%}
         <span class="flash">{{err}}</span>
     {% endfor %}<br>
-    {{form.city.label}}: {{form.city}} 
+    {{form.city.label}} {{form.city}} 
     {%for err in form.city.errors%}
         <span class="flash">{{err}}</span>
     {% endfor %}<br>
-    {{form.state.label}}: {{form.state}} 
+    {{form.state.label}} {{form.state}} 
     {%for err in form.state.errors%}
         <span class="flash">{{err}}</span>
     {% endfor %}<br>
-    {{form.password.label}}: {{form.password}} 
+    {{form.password.label}} {{form.password}} 
     {%for err in form.password.errors%}
         <span class="flash">{{err}}</span>
     {% endfor %}<br> 

@@ -15,7 +15,9 @@ def create_map(longitude, latitude, speed):
         lon = longitude,
         lat = latitude,
         hovertext = speed,
-        marker=dict(color=speed, size=8)
+        marker=dict(color=speed, size=8),
+
+        hovertemplate= "Speed: %{hovertext}mph",
         
     )
 

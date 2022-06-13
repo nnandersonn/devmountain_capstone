@@ -28,6 +28,8 @@ def parse_file(file):
                 speed = point.speed_between(previous_point)
                 if speed is None:
                     speed = 0
+                else:
+                    speed = round((point.speed_between(previous_point) * 2.236936), 2)
                 seg_speed.append(speed)
 
                 distance = point.distance_3d(previous_point)

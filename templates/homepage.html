@@ -4,17 +4,18 @@
    
 <div class="card-container">
     {% if current_user.is_anonymous %}
-    
-    <div class="card">
-        <h3> Welcome to the pack!</h3> <br>
-        Please login in or register an account to start tracking your pet activities and growing your pack!
+    <h3> Welcome to the pack!</h3>
+    <div class="homepage-card">
+        Please login in or register an account to start tracking your pet's activities and growing your pack!
     </div>
     {% endif %}
     {% if current_user.is_authenticated %}
-    <div class="card">
-        <h3> Welcome back to the pack! </h3> <br>
+    <h3> Welcome back to the pack! </h3> <br>
+    <div class="homepage-card">
         <img src="http:{{weather.current_weather_icon}}" alt="" srcset=""> 
-        Current Weather in {{current_user.city}} is {{weather.current_weather}} and {{weather.current_temp}}°F.  
+        {{weather_sentence}} <br>
+        The temperature is {{weather.current_temp}}°F 
+
     </div>
     {% endif %}
 
