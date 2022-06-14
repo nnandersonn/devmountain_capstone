@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<form action="/add_pet" method="POST" novalidate>
+<form action="/add_pet" method="POST" class="pet-card" novalidate>
     {{form.csrf_token}}
     {{form.name.label}}: {{form.name}} 
     {%for err in form.name.errors%}

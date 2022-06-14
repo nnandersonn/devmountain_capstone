@@ -1,18 +1,23 @@
+from curses import update_lines_cols
 from random import choices
 from sqlite3 import connect
 from turtle import distance
 from flask import Flask, render_template, redirect, request, flash, session
+from numpy import empty
 from wtforms import Form, BooleanField, StringField, DateField, PasswordField, SubmitField, SelectField, SelectMultipleField, validators, IntegerField
 from wtforms.validators import InputRequired, Email
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
-from sqlalchemy import delete
+from sqlalchemy import delete, desc
 from dotenv import load_dotenv
+from datetime import datetime
+import arrow
 import requests
 import json
 import os
+import math
 
 from model import Pet_Activity, User, Pet, Activity, GPS_Point, Friend, connect_to_db, db
 from gpx import parse_file
@@ -38,61 +43,82 @@ def index():
     """Homepage"""
     weather = None
     weather_sentence = None
+    upcoming_birthdays = None
     if current_user.is_active:
         weather = get_forecast(current_user.city)
         weather_sentence = should_i_walk(weather['current_temp'], weather['current_weather'])
         print( weather_sentence)
 
-    return render_template('homepage.html', weather = weather, weather_sentence=weather_sentence)
+        upcoming_birthdays = get_pack_birthdays()
 
-@app.route('/register', methods=["GET"])
+    return render_template('homepage.html', weather = weather, weather_sentence=weather_sentence, upcoming_birthdays=upcoming_birthdays)
+
+@app.route('/register', methods=["GET", "POST"])
 def register():
     """Display form to register for account"""
     form = RegistrationForm()
 
+    if form.validate_on_submit():
+        email = request.form['email']
+        password = request.form['password']
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        city = request.form['city'].capitalize()
+        state = request.form['state']
+        match = User.query.filter_by(email=email).first()
+        if match is None:
+            user = User(email = email, password = password, first_name = first_name, last_name = last_name, city = city, state = state)
+            db.session.add(user)
+            db.session.commit()
+            flash('Account created!')
+            return redirect('/')
+        else:
+            flash('Account already created with this email')
+            return render_template('register.html', form=RegistrationForm())
+
     return render_template('register.html', form=form)
 
-@app.route('/register', methods=["POST"])
-def check_registration():
-    email = request.form['email']
-    password = request.form['password']
-    first_name = request.form['first_name']
-    last_name = request.form['last_name']
-    city = request.form['city'].capitalize()
-    state = request.form['state']
-    match = User.query.filter_by(email=email).first()
-    if match is None:
-        user = User(email = email, password = password, first_name = first_name, last_name = last_name, city = city, state = state)
-        db.session.add(user)
-        db.session.commit()
-        flash('Account created!')
-        return redirect('/')
-    else:
-        flash('Account already created with this email')
-        return render_template('register.html', form=RegistrationForm())
+# @app.route('/register', methods=["POST"])
+# def check_registration():
+#     email = request.form['email']
+#     password = request.form['password']
+#     first_name = request.form['first_name']
+#     last_name = request.form['last_name']
+#     city = request.form['city'].capitalize()
+#     state = request.form['state']
+#     match = User.query.filter_by(email=email).first()
+#     if match is None:
+#         user = User(email = email, password = password, first_name = first_name, last_name = last_name, city = city, state = state)
+#         db.session.add(user)
+#         db.session.commit()
+#         flash('Account created!')
+#         return redirect('/')
+#     else:
+#         flash('Account already created with this email')
+#         return render_template('register.html', form=RegistrationForm())
 
-@app.route('/login', methods=["GET"])
+@app.route('/login', methods=["GET", "POST"])
 def login():
     form = LoginForm()
 
+    if form.validate_on_submit():
+        email = request.form['email']
+        password = request.form['password']
+        match = User.query.filter_by(email=email).first()
+        if match: 
+            if match.password == password: 
+                login_user(match)
+                flash("You are successfully logged in!")
+                return redirect('/')
+            else:
+                flash("Email/Password not valid. Register for an account if you have not created one already")
+                return redirect('/')
+        else:
+                flash("Email/Password not valid. Register for an account if you have not created one already")
+                return redirect('/')
+
     return render_template('login.html', form=form)
 
-@app.route('/login', methods=["POST"])
-def check_login():
-    email = request.form['email']
-    password = request.form['password']
-    match = User.query.filter_by(email=email).first()
-    if match: 
-        if match.password == password: 
-            login_user(match)
-            flash("You are successfully logged in!")
-            return redirect('/')
-        else:
-            flash("Email/Password not valid. Register for an account if you have not created one already")
-            return redirect('/')
-    else:
-            flash("Email/Password not valid. Register for an account if you have not created one already")
-            return redirect('/')
 
 @app.route('/profile')
 def profile():
@@ -102,6 +128,9 @@ def profile():
 @app.route('/add_pet', methods=["GET"])
 def add_pet():
     form = PetRegistrationForm()
+
+
+
     return render_template('add_pet.html', form=form)
 
 @app.route('/add_pet', methods=["POST"])
@@ -124,9 +153,12 @@ def logout():
 
 @app.route('/pets')
 def display_pets():
-    return render_template('pets.html')
+    pets = get_pets()
+    print(pets)
 
-@app.route('/edit_pet/<pet_id>', methods=["GET"])
+    return render_template('pets.html', pets=pets)
+
+@app.route('/edit_pet/<pet_id>', methods=["GET", "POST"])
 def edit_pet(pet_id):
     pet = Pet.query.filter_by(pet_id = pet_id).first()
     form = PetEditForm()
@@ -134,20 +166,33 @@ def edit_pet(pet_id):
     form.breed.data = pet.breed
     form.birthday.data = pet.birthday
 
+    if form.validate_on_submit():
+        pet = Pet.query.filter_by(pet_id = pet_id).first()
+        pet_name = request.form['name']
+        breed = request.form['breed']
+        birthday = request.form['birthday']
+        pet.pet_name = pet_name
+        pet.breed = breed
+        pet.birthday = birthday
+        db.session.commit()
+        flash(f"{pet_name}'s info has been successfully updated!")
+        return redirect('/')
+
+
     return render_template('edit_pet.html', pet=pet, form=form)
 
-@app.route('/edit_pet/<pet_id>', methods=["POST"])
-def update_pet(pet_id):
-    pet = Pet.query.filter_by(pet_id = pet_id).first()
-    pet_name = request.form['name']
-    breed = request.form['breed']
-    birthday = request.form['birthday']
-    pet.pet_name = pet_name
-    pet.breed = breed
-    pet.birthday = birthday
-    db.session.commit()
-    flash(f"{pet_name}'s info has been successfully updated!")
-    return redirect('/')
+# @app.route('/edit_pet/<pet_id>', methods=["POST"])
+# def update_pet(pet_id):
+#     pet = Pet.query.filter_by(pet_id = pet_id).first()
+#     pet_name = request.form['name']
+#     breed = request.form['breed']
+#     birthday = request.form['birthday']
+#     pet.pet_name = pet_name
+#     pet.breed = breed
+#     pet.birthday = birthday
+#     db.session.commit()
+#     flash(f"{pet_name}'s info has been successfully updated!")
+#     return redirect('/')
     
 @app.route('/activities', methods=["GET"])
 def activities():
@@ -169,11 +214,10 @@ def activity():
         db.session.commit()
         activity_id = activity.activity_id
 
-        pets = form.pet_select.data
-        for pet in pets:
-            pet_activity = Pet_Activity(pet_id = pet, activity_id = activity_id)
-            db.session.add(pet_activity)
-            db.session.commit()
+        pet = form.pet_select.data
+        pet_activity = Pet_Activity(pet_id = pet, activity_id = activity_id)
+        db.session.add(pet_activity)
+        db.session.commit()
 
         file = request.files.get('gpx_file')
         
@@ -317,7 +361,7 @@ class PetEditForm(FlaskForm):
 class ActivityForm(FlaskForm):
     activity_name = StringField("Activity Title", [InputRequired("Please enter a name for your activity")])
     activity_type = SelectField("Activity Type", choices=["Walk", "Run", "Hike", "Swim", "Other"])
-    pet_select = SelectMultipleField("Pet Select", coerce=int)
+    pet_select = SelectField("Pet Select", coerce=int)
     date = DateField("Date", [InputRequired("Enter the date of the activity")])
 
     gpx_file = FileField("GPX File", [InputRequired("Upload a .gpx file")])
@@ -388,7 +432,61 @@ def get_pack():
             total_distances.update({friend.pet_name: total_distance})
     return sorted(total_distances.items(), key= lambda ele:ele[1], reverse = True)
 
+def get_pets():
+    pets = []
+    for pet in current_user.pets:
+        current_pet = {}
+        current_pet["pet_id"] = pet.pet_id
+        current_pet["pet_name"] = pet.pet_name
+        current_pet["breed"] = pet.breed
+        current_pet["age"] = get_pet_age(pet)
+        pets.append(current_pet)
 
+    return pets
+
+
+
+def get_pet_age(pet):
+    print(pet.birthday.year)
+    current_date = arrow.utcnow()
+    age = current_date - arrow.get(pet.birthday)
+    age = (age.days)/365.25
+    if age < 1:
+        age = round(age, 1)
+    else:
+        age = math.floor(age)
+    return age
+
+def get_pack_birthdays():
+    pack = set()
+    for pet in current_user.pets:
+        pack.add(pet)
+        existing_friends = Friend.query.filter_by(pet_id = pet.pet_id).all()
+        for existing_friend in existing_friends:
+            friend_id = existing_friend.friend_id
+            friend = Pet.query.filter_by(pet_id = friend_id).first()
+            pack.add(friend)
+
+    pets = []
+    for pet in pack:
+        current_pet = {}
+        current_pet["pet_name"] = pet.pet_name
+        birthday = arrow.get(pet.birthday)
+        today = arrow.now()
+        how_close = (((today-birthday).days)/365.25)%1
+        current_pet["close_to_birthday"] = how_close 
+        pet_birthday = arrow.get(pet.birthday)
+        current_pet["birthday"] = pet_birthday.format('MMMM DD')
+        current_pet["upcoming_age"] = math.floor(get_pet_age(pet)+1)
+        pets.append(current_pet)
+
+    def sort_pets(e):
+        return e['close_to_birthday']
+
+    pets.sort(reverse=True, key=sort_pets)
+    print(pets)
+
+    return pets
 
 
 if __name__ == "__main__":

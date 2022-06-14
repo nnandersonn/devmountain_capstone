@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action="/activity" method="POST" enctype="multipart/form-data" class="activity-create-card">
+<form action="/activity" method="POST" enctype="multipart/form-data" class="activity-create-card" novalidate>
     {{form.csrf_token}}
     Title: {{form.activity_name}} 
     {%for err in form.activity_name.errors%}

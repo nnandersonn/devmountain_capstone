@@ -27,9 +27,9 @@ def should_i_walk(temp, condition):
     if temp < 32:
         return "It is freezing out there! Bundle up."
     elif temp < 64 and 'rain' in condition:
-        return "It's cold and rainy out. Don't forget that umbrella."
+        return "It's chilly and rainy out. Don't forget that umbrella."
     elif temp < 64:
-        return "It's cold out but no rain in sight!"
+        return "It's chilly out but no rain in sight!"
     elif temp < 76 and 'rain' in condition:
         return "It's a comfortable temperature but raining."
     elif temp <76:

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action="/edit_pet/{{pet.pet_id}}" method="POST" novalidate>
+<form action="/edit_pet/{{pet.pet_id}}" method="POST" novalidate class="pet-card">
     {{form.csrf_token}}
     {{form.name.label}}: {{form.name}} 
     {%for err in form.name.errors%}

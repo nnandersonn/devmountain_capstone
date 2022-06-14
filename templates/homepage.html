@@ -10,13 +10,21 @@
     </div>
     {% endif %}
     {% if current_user.is_authenticated %}
-    <h3> Welcome back to the pack! </h3> <br>
-    <div class="homepage-card">
-        <img src="http:{{weather.current_weather_icon}}" alt="" srcset=""> 
-        {{weather_sentence}} <br>
-        The temperature is {{weather.current_temp}}°F 
+        <h3> Welcome back to the pack </h3> <br>
+        <div class="homepage-card">
+            <h3>{{current_user.city}}</h3>
+            <img src="http:{{weather.current_weather_icon}}" alt="" srcset=""> 
+            {{weather_sentence}} <br>
+            The temperature is {{weather.current_temp}}°F 
 
-    </div>
+        </div>
+        {% if upcoming_birthdays %}        
+            <br>
+                <h3>Next Pack Birthday</h3>
+            <div class="homepage-card">
+                {{upcoming_birthdays[0].pet_name}} is turning {{upcoming_birthdays[0].upcoming_age}} on {{upcoming_birthdays[0].birthday}}
+            </div>
+        {%endif%}
     {% endif %}
 
 </div>

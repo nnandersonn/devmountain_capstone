@@ -1,13 +1,14 @@
 {%extends 'base.html'%}
 
 {% block content %}
-
+    
     {% for match in possible_matches %}
+        <div class="pet-card">
         Name: {{match.pet_name}} <br>
         Birthday: {{match.birthday}} <br>
         Location: {{match.users.city}}, {{match.users.state}} <br>
         Owner: {{match.users.first_name}} <br>
         <a href="add_friend/{{match.pet_id}}">Add to Pack</a>
+        </div>
     {% endfor %}
-
 {% endblock %}

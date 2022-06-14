@@ -3,15 +3,17 @@
 {% block content%}
 
 <div class="card-container">
-{% for pet in current_user.pets %}
+{% for pet in pets %}
     
     <div class="pet-card">
-        <h4>{{pet.pet_name}}</h4>
-        <a href="/edit_pet/{{pet.pet_id}}">Edit</a> 
+        <h3>{{pet['pet_name']}}</h4>
+        <h5>Breed: {{pet['breed']}}</h5>
+        <h5>{{pet['age']}} years old</h5>
+        <a href="/edit_pet/{{pet['pet_id']}}">Edit</a> 
     </div>
-
 {% endfor %}
 </div>
+
 <form action="/add_pet">
     <button type="submit">Add a Pet</button>
 </form>
