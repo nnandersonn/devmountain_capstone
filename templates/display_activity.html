@@ -12,7 +12,7 @@
                 <h3>Type: {{activity.activity_type}}</h3> 
             </div>
             <div class="activity-info-card">
-                Date: {{activity.date}} <br>
+                {{activity.date.strftime("%B %d, %Y")}} <br>
                 Max Speed: {{max_speed}}mph <br>
                 Avg Speed: {{avg_speed}}mph <br>
                 Total Distance: {{total_distance}}miles

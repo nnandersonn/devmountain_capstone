@@ -78,24 +78,6 @@ def register():
 
     return render_template('register.html', form=form)
 
-# @app.route('/register', methods=["POST"])
-# def check_registration():
-#     email = request.form['email']
-#     password = request.form['password']
-#     first_name = request.form['first_name']
-#     last_name = request.form['last_name']
-#     city = request.form['city'].capitalize()
-#     state = request.form['state']
-#     match = User.query.filter_by(email=email).first()
-#     if match is None:
-#         user = User(email = email, password = password, first_name = first_name, last_name = last_name, city = city, state = state)
-#         db.session.add(user)
-#         db.session.commit()
-#         flash('Account created!')
-#         return redirect('/')
-#     else:
-#         flash('Account already created with this email')
-#         return render_template('register.html', form=RegistrationForm())
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
@@ -181,18 +163,6 @@ def edit_pet(pet_id):
 
     return render_template('edit_pet.html', pet=pet, form=form)
 
-# @app.route('/edit_pet/<pet_id>', methods=["POST"])
-# def update_pet(pet_id):
-#     pet = Pet.query.filter_by(pet_id = pet_id).first()
-#     pet_name = request.form['name']
-#     breed = request.form['breed']
-#     birthday = request.form['birthday']
-#     pet.pet_name = pet_name
-#     pet.breed = breed
-#     pet.birthday = birthday
-#     db.session.commit()
-#     flash(f"{pet_name}'s info has been successfully updated!")
-#     return redirect('/')
     
 @app.route('/activities', methods=["GET"])
 def activities():
@@ -218,7 +188,7 @@ def activity():
         pet_activity = Pet_Activity(pet_id = pet, activity_id = activity_id)
         db.session.add(pet_activity)
         db.session.commit()
-
+        activity_id = pet_activity.activity_id
         file = request.files.get('gpx_file')
         
         latitude, longitude, elevation, time, seg_distance, seg_speed = parse_file(file)
@@ -227,8 +197,7 @@ def activity():
             db.session.add(gps_point)
             db.session.commit()
         
-
-        return render_template('activities.html')
+        return redirect(f'/activity/{activity_id}')
 
     return render_template('activity.html', form=form)
 

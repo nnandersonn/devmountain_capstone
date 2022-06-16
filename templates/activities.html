@@ -15,8 +15,8 @@
         <div class="card-container">
             {% for p_a in pet.pet_activities%}
                 <div class="activity-card">
-                    {{p_a.activities.activity_name}}<br>
-                    {{p_a.activities.date}} <br>
+                    <p>{{p_a.activities.activity_name}}</p>
+                    {{p_a.activities.date.strftime("%B %d, %Y")}} <br>
                     <a href="/activity/{{p_a.activity_id}}">View Details</a>
                 </div>
             
