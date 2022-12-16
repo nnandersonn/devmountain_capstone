@@ -9,7 +9,7 @@ class User(db.Model, UserMixin):
 
     __tablename__ = "users"
 
-    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     password = db.Column(db.String(64))
     first_name = db.Column(db.String(64))
     last_name = db.Column(db.String(64))
@@ -20,7 +20,7 @@ class User(db.Model, UserMixin):
     pets = db.relationship("Pet", backref='users')
 
     def __repr__(self):
-        return f"<User user_id={self.user_id} email={self.email}>"
+        return f"<User id={self.id} email={self.email}>"
 
 class Pet(db.Model):
     """Pet of a given user"""
@@ -29,7 +29,7 @@ class Pet(db.Model):
 
     pet_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     pet_name = db.Column(db.String(64))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    id = db.Column(db.Integer, db.ForeignKey('users.id'))
     breed = db.Column(db.String(64))
     birthday = db.Column(db.Date)
 
@@ -103,6 +103,7 @@ def connect_to_db(app):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
+
 
 if __name__ == "__main__":
     # As a convenience, if we run this module interactively, it will leave

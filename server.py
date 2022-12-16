@@ -33,8 +33,8 @@ app.secret_key = os.getenv('SECRET_KEY')
 
 
 @login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(user_id)
+def load_user(id):
+    return User.query.get(id)
 
 
 
@@ -120,7 +120,7 @@ def create_pet():
     pet_name = request.form['name'].capitalize()
     breed = request.form['breed'].capitalize()
     birthday = request.form['birthday']
-    pet = Pet(pet_name = pet_name, user_id = current_user.user_id, breed = breed, birthday = birthday)
+    pet = Pet(pet_name = pet_name, id = current_user.id, breed = breed, birthday = birthday)
     db.session.add(pet)
     db.session.commit()
     flash(f"Your pet {pet_name} has been added to your account!")
