@@ -1,7 +1,5 @@
 from curses import update_lines_cols
 from random import choices
-from sqlite3 import connect
-from turtle import distance
 from flask import Flask, render_template, redirect, request, flash, session
 from numpy import empty
 from wtforms import Form, BooleanField, StringField, DateField, PasswordField, SubmitField, SelectField, SelectMultipleField, validators, IntegerField
