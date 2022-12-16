@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from sqlalchemy import ForeignKey
+import os
 
 db = SQLAlchemy()
 
@@ -98,8 +99,11 @@ class Friend(db.Model):
 def connect_to_db(app):
     """Connect the database to our Flask app."""
 
+    db_user = os.getenv('DB_USERNAME')
+    db_password = os.getenv('DB_PASSWORD')
+
     # Configure to use our PstgreSQL database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///trackthepack'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@trackthepack.cjvpehlz3vcl.us-west-2.rds.amazonaws.com:5432/trackthepack'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
